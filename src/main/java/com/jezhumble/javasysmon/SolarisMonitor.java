@@ -6,18 +6,25 @@ import java.util.ArrayList;
 class SolarisMonitor implements Monitor {
     private static Monitor monitor = null;
     private final FileUtils fileUtils;
+    private static String platform;
 
     static {
         if (System.getProperty("os.name").toLowerCase().startsWith("sunos")) {
             if (System.getProperty("os.arch").toLowerCase().startsWith("x86")) {
                 new NativeLibraryLoader().loadLibrary("javasysmonsolx86.so");
                 monitor = new SolarisMonitor();
+                platform = "Solaris (x86)");
+            }
+            if (System.getProperty("os.arch").toLowerCase().startsWith("sparc")) {
+                new NativeLibraryLoader().loadLibrary("javasysmonsolsparc.so");
+                monitor = new SolarisMonitor();
+                platform = "Solaris (sparc)");
             }
         }
     }
 
     public SolarisMonitor() {
-        JavaSysMon.addSupportedConfig("Solaris (x86)");
+        JavaSysMon.addSupportedConfig(platform);
         if (monitor != null) {
             JavaSysMon.setMonitor(monitor);
         }
