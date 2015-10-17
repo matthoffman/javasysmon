@@ -1,0 +1,3 @@
+#!/bin/sH
+cc -G -I/usr/java7/include -I/usr/java7/include/aix -h javasysmonsaix.so -lkstat -o javasysmonaix.so javasysmon.c
+cp *.so ../lib/native/
