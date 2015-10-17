@@ -11,10 +11,11 @@
 #include <jni.h>
 #include <windows.h>
 #include <winbase.h>
+#include <winternl.h>
 #include <tchar.h>
 #include <psapi.h>
 #include <tlhelp32.h>
-#include <Sddl.h>
+#include <sddl.h>
 
 static SYSTEM_INFO system_info;
 static int num_cpu;
@@ -188,11 +189,13 @@ DWORD WideCharToUTF8(wchar_t* utf16, char** utf8, DWORD* out_utf8_len)
 	return 0;
 }
 
+#ifndef _WINTERNL_
 typedef struct _LSA_UNICODE_STRING {
 	USHORT Length;
 	USHORT MaximumLength;
 	PWSTR  Buffer;
 } LSA_UNICODE_STRING, *PLSA_UNICODE_STRING, UNICODE_STRING, *PUNICODE_STRING;
+#endif
 
 typedef NTSTATUS (NTAPI *_NtQueryInformationProcess)(
 	HANDLE ProcessHandle,
@@ -202,6 +205,7 @@ typedef NTSTATUS (NTAPI *_NtQueryInformationProcess)(
 	PDWORD ReturnLength
 	);
 
+#ifndef _WINTERNL_
 typedef struct _PROCESS_BASIC_INFORMATION
 {
 	LONG ExitStatus;
@@ -211,6 +215,7 @@ typedef struct _PROCESS_BASIC_INFORMATION
 	ULONG_PTR UniqueProcessId;
 	ULONG_PTR ParentProcessId;
 } PROCESS_BASIC_INFORMATION, *PPROCESS_BASIC_INFORMATION;
+#endif
 
 /**
  *	Retrieve the original command line from the process environment block (PEB). Returns ZERO upon success, NON-ZERO otherwise.

@@ -1,0 +1,5 @@
+GXX=/usr/local/ext/source/tm/Packages/mingw/i686/bin/i686-w64-mingw32-gcc
+PKG=/usr/local/ext/source/tm/Packages
+
+$GXX -I$PKG/mingw/jdk-1.6.0_33/include -I$PKG/mingw/jdk-1.6.0_33/include/win32 -c  javasysmon.c
+$GXX -shared -Wl,--kill-at -o javasysmon.dll  javasysmon.o  -lpsapi
