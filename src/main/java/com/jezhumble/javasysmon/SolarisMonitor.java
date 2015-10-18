@@ -13,12 +13,12 @@ class SolarisMonitor implements Monitor {
             if (System.getProperty("os.arch").toLowerCase().startsWith("x86")) {
                 new NativeLibraryLoader().loadLibrary("javasysmonsolx86.so");
                 monitor = new SolarisMonitor();
-                platform = "Solaris (x86)");
+                platform = "Solaris (x86)";
             }
             if (System.getProperty("os.arch").toLowerCase().startsWith("sparc")) {
-                new NativeLibraryLoader().loadLibrary("javasysmonsolsparc.so");
+                new NativeLibraryLoader().loadLibrary("javasysmonsparc.so");
                 monitor = new SolarisMonitor();
-                platform = "Solaris (sparc)");
+                platform = "Solaris (sparc)";
             }
         }
     }
