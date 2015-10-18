@@ -34,7 +34,7 @@ class AixMonitor implements Monitor {
         for (int i = 0; i < pids.length; i++) {
             try {
                 byte[] psinfo = fileUtils.slurpToByteArray("/proc/" + pids[i] + "/psinfo");
-                byte[] usage = fileUtils.slurpToByteArray("/proc/" + pids[i] + "/usage");
+                byte[] usage = fileUtils.slurpToByteArray("/proc/" + pids[i] + "/status");
                 processTable.add(psinfoToProcess(psinfo, usage));
             } catch (IOException e) {
                 // process doesn't exist any more
