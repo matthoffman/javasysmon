@@ -52,6 +52,7 @@ public class JavaSysMon implements Monitor {
         new LinuxMonitor();
         new WindowsMonitor();
         new SolarisMonitor();
+        new AixMonitor();
         new NullMonitor(); // make sure the API never gives back a NPE
     }
 
