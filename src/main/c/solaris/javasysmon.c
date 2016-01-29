@@ -248,5 +248,5 @@ JNIEXPORT jobject JNICALL Java_com_jezhumble_javasysmon_SolarisMonitor_psinfoToP
 }
 
 JNIEXPORT void JNICALL Java_com_jezhumble_javasysmon_SolarisMonitor_killProcess (JNIEnv *env, jobject object, jint pid) {
-  kill(pid, SIGTERM);
+  kill(pid, SIGKILL);
 }

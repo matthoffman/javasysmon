@@ -2,9 +2,9 @@ package com.jezhumble.javasysmon;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -151,7 +151,20 @@ class LinuxMonitor implements Monitor {
 
     public void killProcess(int pid) {
         try {
-            ProcessKiller.DESTROY_PROCESS.invoke(null, new Object[]{new Integer(pid)});
+            final Runtime runtime = Runtime.getRuntime();
+            runtime.exec("kill -TERM " + pid);
+
+            final File processFile = new File("/proc/" + pid);
+            // Wait up to 60 seconds for the process to be killed
+            for (int i = 0; i < 6; i++){
+                Thread.sleep(TimeUnit.SECONDS.toMillis(10));
+                if (!processFile.exists()){
+                    return;
+                }
+            }
+
+            // If not yet dead, force it
+            runtime.exec("kill -KILL " + pid);
         } catch (Exception e) {
             throw new RuntimeException("Could not kill process id " + pid, e);
         }
@@ -172,23 +185,5 @@ class LinuxMonitor implements Monitor {
     private long toMillis(long jiffies) {
         int multiplier = 1000 / userHz;
         return jiffies * multiplier;
-    }
-
-    // Stole this from Hudson (hudson.util.ProcessTree). It's a hack because it's an undocumented API in the JVM.
-    // However I can't think of any better way to do this without writing native code for Linux which I want to avoid.
-    // Wouldn't it be nice if deleting a directory in the proc filesystem killed the process?
-    private static final class ProcessKiller {
-        private static Method DESTROY_PROCESS = null;
-
-        static {
-            try {
-                Class clazz = Class.forName("java.lang.UNIXProcess");
-                DESTROY_PROCESS = clazz.getDeclaredMethod("destroyProcess", new Class[]{int.class});
-                DESTROY_PROCESS.setAccessible(true);
-            } catch (Exception e) {
-                LinkageError x = new LinkageError("Couldn't get method java.lang.UNIXProcess.destroyProcess(int)");
-                x.initCause(e);
-            }
-        }
     }
 }
